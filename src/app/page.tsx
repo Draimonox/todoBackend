@@ -1,12 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function TodoApp() {
   const [todo, setTodo] = useState("");
-  const [todoArr, setTodoArr] = useState<string[]>([]);
+  const [todos, setTodos] = useState<{ id: string; todo: string }[]>([]);
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setTodo(e.currentTarget.value);
+    setTodo(e.target.value);
   }
 
   async function addTodo() {
@@ -17,38 +17,47 @@ function TodoApp() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          todo: {
-            id: Date.now().toString(),
-            content: todo,
-            dateCreated: new Date().toISOString(),
-          },
+          todo, // Matches the structure expected by the server
         }),
       });
+
       if (!res.ok) {
         throw new Error("Network response was not ok");
       }
-      const data = await res.json();
-      console.log("Todo created:", data);
-      setTodoArr([...todoArr, data]);
+
+      const newTodo = await res.json();
+      setTodos((prevTodos) => [...prevTodos, newTodo]);
+      setTodo("");
     } catch (err) {
       console.error("Error creating todo:", err);
     }
   }
 
-  function toggleLineThrough(e: React.MouseEvent<HTMLLIElement>) {
-    const element = e.currentTarget;
-    if (element.style.textDecoration === "line-through") {
-      element.style.textDecoration = "none";
-    } else {
-      element.style.textDecoration = "line-through";
+  useEffect(() => {
+    async function fetchTodos() {
+      try {
+        const response = await fetch("/api/todo", {
+          method: "GET",
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch todos");
+        }
+
+        const data = await response.json();
+        setTodos(data);
+      } catch (error) {
+        console.error("Failed to fetch todos:", error);
+      }
     }
-  }
+
+    fetchTodos();
+  }, []);
 
   return (
-    <>
+    <div style={{ color: "white" }}>
       <h1 style={{ textAlign: "center" }}>Todo List</h1>
       <input
-        className="inputBox"
         type="text"
         placeholder="Add Todo"
         value={todo}
@@ -58,27 +67,28 @@ function TodoApp() {
       <button
         onClick={addTodo}
         style={{
-          border: "1px",
-          borderColor: "white",
-          borderStyle: "solid",
+          border: "1px solid white",
           borderRadius: "25px",
-          marginLeft: "45.5%",
+          margin: "10px auto",
+          display: "block",
         }}
       >
         Add Todo
       </button>
       <ul style={{ listStyleType: "none", padding: 0 }}>
-        {todoArr.map((element, index) => (
+        {todos.map((todoItem) => (
           <li
-            onClick={toggleLineThrough}
-            key={index}
+            key={todoItem.id}
             style={{ cursor: "pointer" }}
+            onClick={() => {
+              console.log(todoItem.id);
+            }}
           >
-            - {element.todo}
+            - {todoItem.todo}
           </li>
         ))}
       </ul>
-    </>
+    </div>
   );
 }
 

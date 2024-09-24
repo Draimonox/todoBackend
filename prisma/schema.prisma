@@ -15,7 +15,7 @@ datasource db {
 
 model Todo {
   id          String   @id @default(uuid())
-  todo        String   @unique
+  todo        String
   dateCreated DateTime @default(now())
 }
 
