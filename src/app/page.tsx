@@ -9,9 +9,30 @@ function TodoApp() {
     setTodo(e.currentTarget.value);
   }
 
-  function addTodo() {
-    setTodoArr([...todoArr, todo]);
-    setTodo("");
+  async function addTodo() {
+    try {
+      const res = await fetch("/api/todo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          todo: {
+            id: Date.now().toString(),
+            content: todo,
+            dateCreated: new Date().toISOString(),
+          },
+        }),
+      });
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await res.json();
+      console.log("Todo created:", data);
+      setTodoArr([...todoArr, data]);
+    } catch (err) {
+      console.error("Error creating todo:", err);
+    }
   }
 
   function clearTodo() {
@@ -57,18 +78,25 @@ function TodoApp() {
           borderColor: "white",
           borderStyle: "solid",
           borderRadius: "25px",
+
+          marginTop: "10px",
         }}
       >
         Clear List
       </button>
-      <ul>
+      <ul style={{ listStyleType: "none", padding: 0 }}>
         {todoArr.map((element, index) => (
-          <li onClick={toggleLineThrough} key={index}>
-            - {element}
+          <li
+            onClick={toggleLineThrough}
+            key={index}
+            style={{ cursor: "pointer" }}
+          >
+            - {element.todo}
           </li>
         ))}
       </ul>
     </>
   );
 }
+
 export default TodoApp;

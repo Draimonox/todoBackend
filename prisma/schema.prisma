@@ -19,6 +19,14 @@ model Todo {
   dateCreated DateTime @default(now())
 }
 
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  email     String   @unique
+  name      String?
+  password  String
+}
+
 // primsa.todo.create()
 // primsa.todo.delete()
 // primsa.todo.update()
