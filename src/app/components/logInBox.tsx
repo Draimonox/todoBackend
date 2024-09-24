@@ -1,7 +1,7 @@
 // // if user creating new account, push new account to DataBase
 // // if user has account, you want to GET from data base
 
-// "use client";
+"use client";
 
 // import { useToggle, upperFirst } from "@mantine/hooks";
 // import { isEmail, useForm } from "@mantine/form";
@@ -19,8 +19,14 @@
 //   Container,
 // } from "@mantine/core";
 // import { Prisma } from "@prisma/client";
-
-// export function AuthenticationForm(props: PaperProps) {
+// props: PaperProps;
+export function AuthenticationForm() {
+  return (
+    <>
+      <h1>hello world</h1>
+    </>
+  );
+}
 //   const [type, toggle] = useToggle(["login", "register"]);
 //   const form = useForm({
 //     initialValues: {
@@ -151,9 +157,3 @@
 //     );
 //   }
 // }
-
-import React from "react";
-
-export default function logInBox() {
-  return <div>logInBox</div>;
-}
