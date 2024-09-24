@@ -35,10 +35,6 @@ function TodoApp() {
     }
   }
 
-  function clearTodo() {
-    setTodoArr([]);
-  }
-
   function toggleLineThrough(e: React.MouseEvent<HTMLLIElement>) {
     const element = e.currentTarget;
     if (element.style.textDecoration === "line-through") {
@@ -71,19 +67,7 @@ function TodoApp() {
       >
         Add Todo
       </button>
-      <button
-        onClick={clearTodo}
-        style={{
-          border: "1px",
-          borderColor: "white",
-          borderStyle: "solid",
-          borderRadius: "25px",
 
-          marginTop: "10px",
-        }}
-      >
-        Clear List
-      </button>
       <ul style={{ listStyleType: "none", padding: 0 }}>
         {todoArr.map((element, index) => (
           <li
