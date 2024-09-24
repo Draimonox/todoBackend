@@ -154,6 +154,6 @@
 
 import React from "react";
 
-export const logInBox = () => {
+export default function logInBox() {
   return <div>logInBox</div>;
-};
+}
