@@ -67,7 +67,6 @@ function TodoApp() {
       >
         Add Todo
       </button>
-
       <ul style={{ listStyleType: "none", padding: 0 }}>
         {todoArr.map((element, index) => (
           <li
