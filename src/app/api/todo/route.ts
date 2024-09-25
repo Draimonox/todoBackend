@@ -1,8 +1,8 @@
-// src/app/api/todo/route.ts
-import { PrismaClient } from "@prisma/client";
+import PrismaClient from "../../../../src/lib/prisma";
+
 import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient();
+const prisma = PrismaClient;
 
 export async function POST(request: Request) {
   try {
