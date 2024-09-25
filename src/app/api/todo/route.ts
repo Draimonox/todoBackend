@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
     const newTodo = await prisma.todo.create({
       data: {
-        todo, // Ensure this matches the todo structure from your client
+        todo,
       },
     });
 

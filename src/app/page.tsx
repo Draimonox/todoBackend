@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 function TodoApp() {
   const [todo, setTodo] = useState("");
-  const [todos, setTodos] = useState<{ id: string; todo: string }[]>([]);
+  const [todos, setTodos] = useState<string[]>([]);
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     setTodo(e.target.value);
@@ -17,7 +17,7 @@ function TodoApp() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          todo, // Matches the structure expected by the server
+          todo,
         }),
       });
 
@@ -33,6 +33,30 @@ function TodoApp() {
     }
   }
 
+  async function deleteTodo(id: number) {
+    try {
+      console.log("Deleting todo with id:", id); // Log the id being deleted
+      const res = await fetch("/api/updateState", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+        }),
+      });
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Response error text:", errorText); // Log the response error text
+        throw new Error("Network Error");
+      }
+
+      await res.json();
+      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+    } catch (err) {
+      console.error("Error deleting todo:", err);
+    }
+  }
   useEffect(() => {
     async function fetchTodos() {
       try {
@@ -52,7 +76,7 @@ function TodoApp() {
     }
 
     fetchTodos();
-  }, []);
+  });
 
   return (
     <div style={{ color: "white" }}>
@@ -75,16 +99,21 @@ function TodoApp() {
       >
         Add Todo
       </button>
+
       <ul style={{ listStyleType: "none", padding: 0 }}>
-        {todos.map((todoItem) => (
-          <li
-            key={todoItem.id}
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              console.log(todoItem.id);
-            }}
-          >
-            - {todoItem.todo}
+        {todos.map((todo) => (
+          <li key={todo.id} style={{ cursor: "pointer" }}>
+            - {todo.todo}
+            <button
+              onClick={() => deleteTodo(todo.id)}
+              style={{
+                border: "1px solid white",
+                borderRadius: "25px",
+                marginLeft: "10px",
+              }}
+            >
+              Delete
+            </button>
           </li>
         ))}
       </ul>
