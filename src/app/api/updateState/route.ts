@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export async function DELETE(request: Request) {
   try {
     const { id } = await request.json();
-    console.log("Received DELETE request with id:", id); // Log the received id
+    console.log("Received DELETE request with id:", id);
     if (!id) {
       throw new Error("Invalid input data");
     }
@@ -20,7 +20,7 @@ export async function DELETE(request: Request) {
       { status: 200 }
     );
   } catch (err) {
-    console.error("Error in DELETE:", err); // Log the error
+    console.error("Error in DELETE:", err);
     return NextResponse.json(
       { error: "Internal Error", details: (err as Error).message },
       { status: 500 }
@@ -31,7 +31,7 @@ export async function DELETE(request: Request) {
 export async function PUT(request: Request) {
   try {
     const { id, todo } = await request.json();
-    console.log("Received PUT request with id:", id, "and todo:", todo); // Log the received id and todo
+    console.log("Received PUT request with id:", id, "and todo:", todo);
     if (!id || !todo) {
       throw new Error("Invalid input data");
     }
@@ -43,7 +43,7 @@ export async function PUT(request: Request) {
 
     return NextResponse.json(updatedTodo, { status: 200 });
   } catch (err) {
-    console.error("Error in PUT:", err); // Log the error
+    console.error("Error in PUT:", err);
     return NextResponse.json(
       { error: "Internal Error", details: (err as Error).message },
       { status: 500 }

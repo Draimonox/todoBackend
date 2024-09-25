@@ -1,12 +1,12 @@
 import React from "react";
-import { AuthenticationForm } from "../components/logInBox";
-export const landingPage = () => {
+// import { AuthenticationForm } from "../components/logInBox";
+function LandingPage() {
   return (
     <>
-      <AuthenticationForm />
+      {/* <AuthenticationForm /> */}
       <h1>landingPage</h1>
     </>
   );
-};
+}
 
-export default landingPage;
+export default LandingPage;

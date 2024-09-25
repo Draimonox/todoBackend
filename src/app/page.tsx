@@ -1,9 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
 
+interface Todo {
+  id: number;
+  todo: string;
+}
+
 function TodoApp() {
   const [todo, setTodo] = useState("");
-  const [todos, setTodos] = useState<string[]>([]);
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentTodoId, setCurrentTodoId] = useState<number | null>(null);
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     setTodo(e.target.value);
@@ -57,6 +64,41 @@ function TodoApp() {
       console.error("Error deleting todo:", err);
     }
   }
+
+  async function updateTodo() {
+    try {
+      const res = await fetch("/api/updateState", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: currentTodoId,
+          todo,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const updatedTodo = await res.json();
+      setTodos((prevTodos) =>
+        prevTodos.map((t) => (t.id === currentTodoId ? updatedTodo : t))
+      );
+      setTodo("");
+      setIsEditing(false);
+      setCurrentTodoId(null);
+    } catch (err) {
+      console.error("Error updating todo:", err);
+    }
+  }
+
+  function handleEditClick(todo: Todo) {
+    setIsEditing(true);
+    setCurrentTodoId(todo.id);
+    setTodo(todo.todo);
+  }
   useEffect(() => {
     async function fetchTodos() {
       try {
@@ -89,7 +131,7 @@ function TodoApp() {
         style={{ color: "black", display: "block", margin: "auto" }}
       />
       <button
-        onClick={addTodo}
+        onClick={isEditing ? updateTodo : addTodo}
         style={{
           border: "1px solid white",
           borderRadius: "25px",
@@ -97,7 +139,7 @@ function TodoApp() {
           display: "block",
         }}
       >
-        Add Todo
+        {isEditing ? "Update Todo" : "Add Todo"}
       </button>
 
       <ul style={{ listStyleType: "none", padding: 0 }}>
@@ -113,6 +155,16 @@ function TodoApp() {
               }}
             >
               Delete
+            </button>
+            <button
+              onClick={() => handleEditClick(todo)}
+              style={{
+                border: "1px solid white",
+                borderRadius: "25px",
+                marginLeft: "10px",
+              }}
+            >
+              Edit
             </button>
           </li>
         ))}
