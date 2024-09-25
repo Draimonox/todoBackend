@@ -118,7 +118,7 @@ function TodoApp() {
     }
 
     fetchTodos();
-  });
+  }, []);
 
   return (
     <div style={{ color: "white" }}>
