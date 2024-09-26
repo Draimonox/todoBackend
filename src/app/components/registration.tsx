@@ -73,6 +73,7 @@ function RegistrationForm() {
             }
           />
           <Input
+            size="lg"
             name="name"
             radius="xl"
             placeholder="Name"
@@ -80,6 +81,7 @@ function RegistrationForm() {
             value={name}
           />
           <Input
+            size="lg"
             name="email"
             style={{ marginTop: "5px" }}
             radius="xl"
@@ -88,6 +90,7 @@ function RegistrationForm() {
             value={email}
           />
           <PasswordInput
+            size="lg"
             name="password"
             radius="xl"
             placeholder="Password"
@@ -96,6 +99,7 @@ function RegistrationForm() {
             value={password}
           />
           <Button
+            size="lg"
             variant="filled"
             color="rgba(115, 5, 5, 1)"
             radius="xl"

@@ -1,38 +1,47 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Button } from "@mantine/core";
+import { Button, Center, Input, List, Text } from "@mantine/core";
 import { getCookie, deleteCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 
 interface Todo {
-  id: number;
+  id: string;
   todo: string;
+  author: string;
 }
 
 function TodoApp() {
   const [todo, setTodo] = useState("");
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentTodoId, setCurrentTodoId] = useState<number | null>(null);
+  const [currentTodoId, setCurrentTodoId] = useState<string | null>(null);
+  const [author, setAuthor] = useState("");
 
   const router = useRouter();
 
   useEffect(() => {
     const userId = getCookie("userId");
+    console.log("User ID from cookie:", userId); // Check cookie value
     if (!userId) {
-      router.push("/login");
+      router.push("/login"); // Redirect if no user ID is found
     } else {
-      return;
+      setAuthor(userId as string); // Ensure author is set
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setTodo(e.target.value);
+    const value = e.target.value;
+    setTodo(value);
+    console.log(value);
   }
 
   async function addTodo() {
     try {
+      if (!todo || !author) {
+        console.error("Todo and author must be provided");
+        return;
+      }
       const res = await fetch("/api/todo", {
         method: "POST",
         headers: {
@@ -40,14 +49,16 @@ function TodoApp() {
         },
         body: JSON.stringify({
           todo,
+          author,
         }),
+        credentials: "include", // Ensure cookies are sent
       });
-
+      const newTodo = await res.json();
+      console.log(newTodo);
       if (!res.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error(newTodo.details);
       }
 
-      const newTodo = await res.json();
       setTodos((prevTodos) => [...prevTodos, newTodo]);
       setTodo("");
     } catch (err) {
@@ -55,7 +66,7 @@ function TodoApp() {
     }
   }
 
-  async function deleteTodo(id: number) {
+  async function deleteTodo(id: string) {
     try {
       console.log("Deleting todo with id:", id);
       const res = await fetch("/api/updateState", {
@@ -66,6 +77,7 @@ function TodoApp() {
         body: JSON.stringify({
           id,
         }),
+        credentials: "include",
       });
       if (!res.ok) {
         const errorText = await res.text();
@@ -91,15 +103,17 @@ function TodoApp() {
           id: currentTodoId,
           todo,
         }),
+        credentials: "include", // Ensure cookies are sent
       });
-
       if (!res.ok) {
         throw new Error("Network response was not ok");
       }
 
       const updatedTodo = await res.json();
       setTodos((prevTodos) =>
-        prevTodos.map((t) => (t.id === currentTodoId ? updatedTodo : t))
+        prevTodos.map((todo) =>
+          todo.id === currentTodoId ? updatedTodo : todo
+        )
       );
       setTodo("");
       setIsEditing(false);
@@ -116,23 +130,28 @@ function TodoApp() {
   }
 
   function resetCookies() {
-    deleteCookie("email");
-    deleteCookie("password");
+    deleteCookie("userId");
     router.push("/login");
   }
 
   useEffect(() => {
     async function fetchTodos() {
       try {
+        const authorId = getCookie("userId");
         const response = await fetch("/api/todo", {
           method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `${authorId}`,
+          },
+          credentials: "include",
         });
 
+        const data = await response.json();
         if (!response.ok) {
           throw new Error("Failed to fetch todos");
         }
-
-        const data = await response.json();
+        console.log(data);
         setTodos(data);
       } catch (error) {
         console.error("Failed to fetch todos:", error);
@@ -149,6 +168,7 @@ function TodoApp() {
           radius="xl"
           type="button"
           color="rgba(115, 5, 5, 1)"
+          size="lg"
           onClick={() => {
             resetCookies();
           }}
@@ -157,57 +177,71 @@ function TodoApp() {
             margin: "10px",
           }}
         >
-          Log Out
+          Log out
         </Button>
       </header>
       <div style={{ color: "white" }}>
-        <h1 style={{ textAlign: "center" }}>Todo List</h1>
-        <input
-          type="text"
-          placeholder="Add Todo"
-          value={todo}
-          onChange={handleInputChange}
-          style={{ color: "white", display: "block", margin: "auto" }}
-        />
-        <Button
-          onClick={isEditing ? updateTodo : addTodo}
-          style={{
-            border: "1px solid white",
-            borderRadius: "25px",
-            margin: "10px auto",
-            display: "block",
-          }}
-        >
-          {isEditing ? "Update Todo" : "Add Todo"}
-        </Button>
+        <Center>
+          <Text style={{ margin: "15px" }} fw={700}>
+            Personal To Do List
+          </Text>
+        </Center>
+        <Center h={75}>
+          <Input
+            variant="filled"
+            size="lg"
+            radius="xl"
+            type="text"
+            placeholder="Add Todo"
+            value={todo}
+            onChange={handleInputChange}
+            style={{ color: "white", width: "300px" }}
+          />
+          <Button
+            radius="xl"
+            size="lg"
+            type="button"
+            color="rgba(115, 5, 5, 1)"
+            onClick={isEditing ? updateTodo : addTodo}
+            style={{
+              marginLeft: "5px",
+            }}
+          >
+            {isEditing ? "Update Todo" : "Add Todo"}
+          </Button>
+        </Center>
 
-        <ul style={{ listStyleType: "none", padding: 0 }}>
+        <List withPadding style={{}}>
           {todos.map((todo) => (
-            <li key={todo.id} style={{ cursor: "pointer" }}>
-              - {todo.todo}
+            <List.Item key={todo.id} style={{ cursor: "pointer" }}>
+              • {todo.todo}
               <Button
+                size="xs"
+                radius="xl"
+                type="button"
+                color="rgba(115, 5, 5, 1)"
                 onClick={() => deleteTodo(todo.id)}
                 style={{
-                  border: "1px solid white",
-                  borderRadius: "25px",
                   marginLeft: "10px",
                 }}
               >
                 Delete
               </Button>
               <Button
+                size="xs"
+                radius="xl"
+                type="button"
+                color="rgba(115, 5, 5, 1)"
                 onClick={() => handleEditClick(todo)}
                 style={{
-                  border: "1px solid white",
-                  borderRadius: "25px",
                   marginLeft: "10px",
                 }}
               >
                 Edit
               </Button>
-            </li>
+            </List.Item>
           ))}
-        </ul>
+        </List>
       </div>
     </>
   );

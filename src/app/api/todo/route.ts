@@ -1,24 +1,37 @@
 import { NextResponse } from "next/server";
 import prisma from "../../../../src/lib/prisma";
+import { headers } from "next/headers";
+
+// Define types for request body
+interface CreateTodoRequest {
+  todo: string;
+  author: string;
+}
 
 export async function POST(request: Request) {
   try {
-    const { todo, id } = await request.json();
+    const { todo, author }: CreateTodoRequest = await request.json();
+
     if (!todo) {
-      throw new Error("Todo content is required");
+      return NextResponse.json(
+        { error: "Todo content is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!author) {
+      return NextResponse.json(
+        { error: "User ID is required" },
+        { status: 400 }
+      );
     }
 
     const newTodo = await prisma.todo.create({
       data: {
         todo,
-        author: {
-          connect: {
-            id,
-          },
-        },
+        author: { connect: { id: author } },
       },
     });
-
     return NextResponse.json(newTodo, { status: 201 });
   } catch (err) {
     console.error("Error creating todo:", err);
@@ -29,9 +42,23 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const todoList = await prisma.todo.findMany();
+    const userId = request.headers.get("authorization");
+    console.log(userId);
+    if (!userId) {
+      return NextResponse.json({ error: "User ID not found" }, { status: 403 });
+    }
+
+    if (!userId) {
+      return NextResponse.json({ error: "User ID not found" }, { status: 403 });
+    }
+
+    const todoList = await prisma.todo.findMany({
+      where: {
+        userId,
+      },
+    });
     return NextResponse.json(todoList, { status: 200 });
   } catch (err) {
     console.error("Error fetching todos:", err);

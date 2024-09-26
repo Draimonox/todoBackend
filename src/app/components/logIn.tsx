@@ -27,7 +27,6 @@ function LogInForm() {
       });
 
       const responseJson = await response.json();
-      // console.log(responseJson);
       if (response.ok) {
         setCookie("userId", responseJson);
         router.push("/");
@@ -75,6 +74,7 @@ function LogInForm() {
             }
           />
           <Input
+            size="lg"
             name="email"
             style={{ marginTop: "5px" }}
             radius="xl"
@@ -84,6 +84,7 @@ function LogInForm() {
           />
           <PasswordInput
             radius="xl"
+            size="lg"
             name="password"
             placeholder="Password"
             style={{ marginTop: "5px" }}
@@ -91,6 +92,7 @@ function LogInForm() {
             value={password}
           />
           <Button
+            size="lg"
             variant="filled"
             radius="xl"
             type="button"
