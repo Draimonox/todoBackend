@@ -90,7 +90,6 @@ function LogInForm() {
           />
           <Button
             variant="filled"
-            color="rgba(115, 5, 5, 1)"
             radius="xl"
             type="button"
             onClick={handleOnClick}

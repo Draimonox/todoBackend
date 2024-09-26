@@ -148,6 +148,9 @@ function TodoApp() {
     <>
       <header>
         <Button
+          radius="xl"
+          type="button"
+          color="rgba(115, 5, 5, 1)"
           onClick={() => {
             resetCookies();
           }}
