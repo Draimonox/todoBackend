@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, ChangeEvent } from "react";
 import { PasswordInput } from "@mantine/core";
 import { Divider } from "@mantine/core";
+import { setCookie } from "cookies-next";
 
 function LogInForm() {
   const [email, setEmail] = useState("");
@@ -14,13 +15,19 @@ function LogInForm() {
     event.preventDefault();
     try {
       const response = await fetch("/api/login", {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
       });
       if (response.ok) {
         console.log(await response.json());
+        setCookie("email", email);
+        setCookie("password", password);
         router.push("/");
       } else {
         throw new Error("Response was not okay");
@@ -34,8 +41,10 @@ function LogInForm() {
     const { name, value } = event.target;
     if (name === "email") {
       setEmail(value);
+      console.log(email);
     } else if (name === "password") {
       setPassword(value);
+      console.log(password);
     }
   }
 

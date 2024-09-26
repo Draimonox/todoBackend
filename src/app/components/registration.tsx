@@ -9,6 +9,7 @@ function RegistrationForm() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const router = useRouter();
+
   async function handleRegistration(event: React.FormEvent) {
     event.preventDefault();
     try {
@@ -25,7 +26,7 @@ function RegistrationForm() {
       });
       if (response.ok) {
         console.log(await response.json());
-        router.push("/");
+        router.push("/login");
       } else {
         throw new Error("Response was not okay");
       }
