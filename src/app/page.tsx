@@ -24,8 +24,10 @@ function TodoApp() {
       router.push("/login");
     } else {
       setAuthCookies({ email, password });
+      console.log(authCookies);
       console.log(email, password);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
