@@ -81,6 +81,7 @@ function LogInForm() {
             placeholder="Email"
             onChange={handleOnChange}
             value={email}
+            type="email"
           />
           <PasswordInput
             radius="xl"

@@ -88,6 +88,7 @@ function RegistrationForm() {
             placeholder="Email"
             onChange={handleOnChange}
             value={email}
+            type="email"
           />
           <PasswordInput
             size="lg"
