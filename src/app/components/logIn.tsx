@@ -9,6 +9,7 @@ import { setCookie } from "cookies-next";
 function LogInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  // const [password, setPassword] = useState("");
 
   const router = useRouter();
   async function handleRegistration(event: React.FormEvent) {
@@ -24,13 +25,14 @@ function LogInForm() {
           password,
         }),
       });
+
+      const responseJson = await response.json();
+      // console.log(responseJson);
       if (response.ok) {
-        console.log(await response.json());
-        setCookie("email", email);
-        setCookie("password", password);
+        setCookie("userId", responseJson);
         router.push("/");
       } else {
-        throw new Error("Response was not okay");
+        throw new Error(responseJson.details);
       }
     } catch (err) {
       console.error(err);

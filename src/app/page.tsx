@@ -14,18 +14,15 @@ function TodoApp() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [currentTodoId, setCurrentTodoId] = useState<number | null>(null);
-  const [authCookies, setAuthCookies] = useState({ email: "", password: "" });
+
   const router = useRouter();
 
   useEffect(() => {
-    const email = getCookie("email") || "";
-    const password = getCookie("password") || "";
-    if (!email || !password) {
+    const userId = getCookie("userId");
+    if (!userId) {
       router.push("/login");
     } else {
-      setAuthCookies({ email, password });
-      console.log(authCookies);
-      console.log(email, password);
+      return;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -123,6 +120,7 @@ function TodoApp() {
     deleteCookie("password");
     router.push("/login");
   }
+
   useEffect(() => {
     async function fetchTodos() {
       try {

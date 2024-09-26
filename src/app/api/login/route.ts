@@ -1,18 +1,27 @@
+// find user
+// get password from FOUND user
+// compare with an if statment with the password of user
+
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
-    const user = await prisma.user.findUnique({
-      where: { email },
+    const findUser = await prisma.user.findUnique({
+      where: {
+        email,
+      },
     });
-    if (user && (await bcrypt.compare(password, user.password))) {
-      return NextResponse.json(user, { status: 200 });
+    if (!findUser) {
+      throw new Error("User was not found");
     }
+    if (password != findUser.password) {
+      throw new Error("password was incorrect");
+    }
+    return NextResponse.json(findUser.id, { status: 201 });
   } catch (err) {
     console.error(err);
     return NextResponse.json(

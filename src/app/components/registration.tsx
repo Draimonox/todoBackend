@@ -3,6 +3,7 @@ import { Anchor, Button, Center, Divider, Input } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import { useState, ChangeEvent } from "react";
 import { PasswordInput } from "@mantine/core";
+import { setCookie } from "cookies-next";
 
 function RegistrationForm() {
   const [email, setEmail] = useState("");
@@ -24,9 +25,10 @@ function RegistrationForm() {
           password,
         }),
       });
+      const responseJson = await response.json();
       if (response.ok) {
-        console.log(await response.json());
-        router.push("/login");
+        setCookie("userId", responseJson.id);
+        router.push("/");
       } else {
         throw new Error("Response was not okay");
       }
