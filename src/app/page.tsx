@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Button } from "@mantine/core";
 
 interface Todo {
   id: number;
@@ -128,9 +129,9 @@ function TodoApp() {
         placeholder="Add Todo"
         value={todo}
         onChange={handleInputChange}
-        style={{ color: "black", display: "block", margin: "auto" }}
+        style={{ color: "white", display: "block", margin: "auto" }}
       />
-      <button
+      <Button
         onClick={isEditing ? updateTodo : addTodo}
         style={{
           border: "1px solid white",
@@ -140,13 +141,13 @@ function TodoApp() {
         }}
       >
         {isEditing ? "Update Todo" : "Add Todo"}
-      </button>
+      </Button>
 
       <ul style={{ listStyleType: "none", padding: 0 }}>
         {todos.map((todo) => (
           <li key={todo.id} style={{ cursor: "pointer" }}>
             - {todo.todo}
-            <button
+            <Button
               onClick={() => deleteTodo(todo.id)}
               style={{
                 border: "1px solid white",
@@ -155,8 +156,8 @@ function TodoApp() {
               }}
             >
               Delete
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => handleEditClick(todo)}
               style={{
                 border: "1px solid white",
@@ -165,7 +166,7 @@ function TodoApp() {
               }}
             >
               Edit
-            </button>
+            </Button>
           </li>
         ))}
       </ul>
