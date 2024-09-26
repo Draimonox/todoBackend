@@ -3,7 +3,7 @@ import prisma from "../../../../src/lib/prisma";
 
 export async function POST(request: Request) {
   try {
-    const { todo } = await request.json();
+    const { todo, id } = await request.json();
     if (!todo) {
       throw new Error("Todo content is required");
     }
@@ -11,6 +11,11 @@ export async function POST(request: Request) {
     const newTodo = await prisma.todo.create({
       data: {
         todo,
+        author: {
+          connect: {
+            id,
+          },
+        },
       },
     });
 
