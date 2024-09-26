@@ -1,26 +1,23 @@
 "use client";
-import { Button, Center, Input } from "@mantine/core";
+import { Anchor, Button, Center, Input } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import { useState, ChangeEvent } from "react";
+import { PasswordInput } from "@mantine/core";
+import { Divider } from "@mantine/core";
 
-function AuthenticationForm() {
+function LogInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+
   const router = useRouter();
   async function handleRegistration(event: React.FormEvent) {
     event.preventDefault();
     try {
-      const response = await fetch("/api/register", {
-        method: "POST",
+      const response = await fetch("/api/login", {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-        }),
       });
       if (response.ok) {
         console.log(await response.json());
@@ -35,9 +32,7 @@ function AuthenticationForm() {
 
   function handleOnChange(event: ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
-    if (name === "name") {
-      setName(value);
-    } else if (name === "email") {
+    if (name === "email") {
       setEmail(value);
     } else if (name === "password") {
       setPassword(value);
@@ -54,12 +49,19 @@ function AuthenticationForm() {
     <>
       <Center h={500} style={{ marginTop: "2.5%" }}>
         <form>
-          <Input
-            name="name"
-            radius="xl"
-            placeholder="Name"
-            onChange={handleOnChange}
-            value={name}
+          <Divider
+            my="xs"
+            label={
+              <Anchor
+                onClick={() => {
+                  router.push("/registration");
+                }}
+                target="_self"
+                inherit
+              >
+                Register
+              </Anchor>
+            }
           />
           <Input
             name="email"
@@ -69,9 +71,9 @@ function AuthenticationForm() {
             onChange={handleOnChange}
             value={email}
           />
-          <Input
-            name="password"
+          <PasswordInput
             radius="xl"
+            name="password"
             placeholder="Password"
             style={{ marginTop: "5px" }}
             onChange={handleOnChange}
@@ -85,12 +87,12 @@ function AuthenticationForm() {
             onClick={handleOnClick}
             style={{ marginTop: "5px" }}
           >
-            Register
-          </Button>
+            Log In
+          </Button>{" "}
         </form>
       </Center>
     </>
   );
 }
 
-export default AuthenticationForm;
+export default LogInForm;
