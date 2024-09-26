@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import prisma from "../../../../src/lib/prisma";
-import { headers } from "next/headers";
 
 // Define types for request body
 interface CreateTodoRequest {
