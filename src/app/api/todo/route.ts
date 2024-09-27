@@ -44,7 +44,7 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   try {
     const userId = request.headers.get("authorization");
-    console.log(userId);
+
     if (!userId) {
       return NextResponse.json({ error: "User ID not found" }, { status: 403 });
     }

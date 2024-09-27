@@ -1,15 +1,13 @@
-// find user
-// get password from FOUND user
-// compare with an if statment with the password of user
-
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
+
     const findUser = await prisma.user.findUnique({
       where: {
         email,
@@ -18,7 +16,8 @@ export async function POST(request: Request) {
     if (!findUser) {
       throw new Error("User was not found");
     }
-    if (password != findUser.password) {
+    const hashedPassword = bcrypt.compareSync(password, findUser?.password);
+    if (hashedPassword === false) {
       throw new Error("password was incorrect");
     }
     return NextResponse.json(findUser.id, { status: 201 });

@@ -182,7 +182,7 @@ function TodoApp() {
       </header>
       <div style={{ color: "white" }}>
         <Center>
-          <Text style={{ margin: "15px" }} fw={700}>
+          <Text td="underline" size="xl" style={{ margin: "15px" }} fw={700}>
             Personal To Do List
           </Text>
         </Center>
