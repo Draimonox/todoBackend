@@ -94,6 +94,7 @@ function LogInForm() {
           />
           <Button
             size="lg"
+            color="rgba(115, 5, 5, 1)"
             variant="filled"
             radius="xl"
             type="button"
